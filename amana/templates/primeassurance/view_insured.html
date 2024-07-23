@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}gestion des primes d'assurances{% endblock %}
+{% block script %}primeassurance_insured.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Liste des assurés pour {{ responsible }}</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Prime d'assurance</li>
+                <li class="breadcrumb-item active">Assurés</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <div
+                    style="width: 100%; display: flex;align-items:center;justify-content:space-between;flex-direction: row;margin-top: 20px;margin-bottom: 20px;">
+                    <form
+                        style="width: 100%;display: flex;align-items: flex-start;justify-content: flex-start;flex-direction: row;"
+                        method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search"
+                                    placeholder="Recherchez un assuré" required value="{{ search_query }}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-success" style="margin-left: 10px;">Rechercher</button>
+                        </div>
+                    </form>
+                    {% if 'amana.add_insured' in user.get_all_permissions %}
+                    <div
+                        style="width: 100%;display: flex;align-items: flex-end;justify-content: flex-end;flex-direction: column;">
+                        <a href="{% url 'primeassurance_add_insured' primeassurance_id %}" class="btn btn-outline-success">Ajouter un assuré</a>
+                    </div>
+                    {% endif%}
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Numéro de Matricule</th>
+                            <th scope="col">Assuré</th>
+                            <th scope="col">Responsable</th>
+                            <th scope="col">Prime</th>
+                            <th scope="col">Statut</th>
+                            {% if 'amana.view_insured' in user.get_all_permissions or 'amana.change_insured' in user.get_all_permissions or 'amana.delete_insured' in user.get_all_permissions %}
+                            <th scope="col">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for insured in insureds %}
+                        <tr>
+                            <td scope="row" style="padding-top: 12px;">{{ insured.registration_number }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ insured.insured }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ insured.responsible }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ insured.prime }} KMF</td>
+                            <td scope="row" style="padding-top: 12px;">{{ insured.status }}</td>
+                            <td>
+                                {% if 'amana.change_insured' in user.get_all_permissions%}
+                                <a href="{% url 'primeassurance_change_insured' primeassurance_id insured.id %}" class="btn btn-success btn-sm"><i
+                                        class="bi bi-pencil"></i></a>
+                                {% endif %}
+                                {% if 'amana.delete_insured' in user.get_all_permissions %}
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ insured.id }}" data-primeassurance-id="{{ primeassurance_id }}"><i
+                                        class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if insureds.has_other_pages %}
+                <nav class="nav_pagination">
+                    <ul class="pagination">
+                        {% if insureds.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ insureds.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in insureds.paginator.page_range %}
+                        {% if insureds.number == num %}
+                        <li class="page-item">
+                            <div class="page-link">{{ num }}</div>
+                        </li>
+                        {% elif num > insureds.number|add:'-5' and num < insureds.number|add:'5' %} <li class="page-item"><a
+                                class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                            {% if insureds.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ insureds.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>
+<div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suppression de l'assuré</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cet assuré ? Cette action est irréversible et toutes les données associées à cet assuré seront définitivement perdues.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-danger" id="btnDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

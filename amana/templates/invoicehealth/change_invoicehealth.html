@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}changer la facture{% endblock %}
+{% block script %}invoicehealth.change.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Changer la facture</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Factures santé</li>
+                <li class="breadcrumb-item active">Changer</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mt-4">Information sur la facture santé</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if invoicehealth %}
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="date" class="col-form-label">Date</label>
+                                <input type="date" class="form-control" name="date" id="date" value="{{invoicehealth.date|date:'Y-m-d'}}" required>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="invoice_number" class="col-form-label">N° Facture</label>
+                                <input type="text" class="form-control" name="invoice_number" id="invoice_number" value="{{invoicehealth.invoice_number}}"  required>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="agency" class="col-form-label">Agence</label>
+                                <select class="form-select" name="agency" id="agency">
+                                    <option value="Siège" {% if invoicehealth.agency == "Siège"  %} selected {% endif %}>Siège</option>
+                                    <option value="Hambramba" {% if invoicehealth.agency == "Hambramba"  %} selected {% endif %}>Hambramba</option>
+                                    <option value="Mitsamiouli" {% if invoicehealth.agency == "Mitsamiouli"  %} selected {% endif %}>Mitsamiouli</option>
+                                    <option value="Mbeni" {% if invoicehealth.agency == "Mbeni"  %} selected {% endif %}>Mbeni</option>
+                                    <option value="Ntsaoueni" {% if invoicehealth.agency == "Ntsaoueni"  %} selected {% endif %}>Ntsaoueni</option>
+                                    <option value="Mitsoudjé" {% if invoicehealth.agency == "Mitsoudjé"  %} selected {% endif %}>Mitsoudjé</option>
+                                    <option value="Foumbouni" {% if invoicehealth.agency == "Foumbouni"  %} selected {% endif %}>Foumbouni</option>
+                                    <option value="Anjouan" {% if invoicehealth.agency == "Anjouan"  %} selected {% endif %}>Anjouan</option>
+                                    <option value="Moheli" {% if invoicehealth.agency == "Moheli"  %} selected {% endif %}>Moheli</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="month" class="col-form-label">Mois</label>
+                                <select class="form-select" name="month" id="month">
+                                    <option value="Janvier" {% if invoicehealth.month == "Janvier"  %} selected {% endif %}>Janvier</option>
+                                    <option value="Février" {% if invoicehealth.month == "Février"  %} selected {% endif %}>Février</option>
+                                    <option value="Mars" {% if invoicehealth.month == "Mars"  %} selected {% endif %}>Mars</option>
+                                    <option value="Avril" {% if invoicehealth.month == "Avril"  %} selected {% endif %}>Avril</option>
+                                    <option value="Mai" {% if invoicehealth.month == "Mai"  %} selected {% endif %}>Mai</option>
+                                    <option value="Juin" {% if invoicehealth.month == "Juin"  %} selected {% endif %}>Juin</option>
+                                    <option value="Juillet" {% if invoicehealth.month == "Juillet"  %} selected {% endif %}>Juillet</option>
+                                    <option value="Août" {% if invoicehealth.month == "Août"  %} selected {% endif %}>Août</option>
+                                    <option value="Septembre" {% if invoicehealth.month == "Septembre"  %} selected {% endif %}>Septembre</option>
+                                    <option value="Octobre" {% if invoicehealth.month == "Octobre"  %} selected {% endif %}>Octobre</option>
+                                    <option value="Novembre" {% if invoicehealth.month == "Novembre"  %} selected {% endif %}>Novembre</option>
+                                    <option value="Décembre" {% if invoicehealth.month == "Décembre"  %} selected {% endif %}>Décembre</option>
+                                </select>
+                            </div> 
+                            <div class="col-sm-6 mb-3">
+                                <label for="registration_number" class="col-form-label">Numéro de Matricule</label>
+                                <select class="form-select" name="registration_number" id="registration_number">
+                                    {% for registration_number in registration_numbers %}
+                                    <option value="{{ registration_number.registration_number }}" {% if invoicehealth.registration_number == registration_number.registration_number  %} selected {% endif %}>{{ registration_number.registration_number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div> 
+                            <div class="col-sm-6 mb-3">
+                                <label for="provider" class="col-form-label">Prestataire</label>
+                                <select class="form-select" name="provider" id="provider">
+                                    {% for provider in providers %}
+                                    <option value="{{ provider.name }}" {% if invoicehealth.provider == provider.name %} selected {% endif %}>{{ provider.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <input type="hidden" class="form-control" name="initial_insured" value="{{invoicehealth.insured}}" id="initial_insured">
+                            <div class="col-sm-6 mb-3">
+                                <label for="insured" class="col-form-label">Assuré</label>
+                                <select class="form-select" name="insured" id="insured">
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="description" class="col-form-label">Description</label>
+                                <input type="text" class="form-control" name="description" value="{{invoicehealth.description}}" id="description" required>
+                            </div>                        
+                            <div class="col-sm-6 mb-3">
+                                <label for="responsible" class="col-form-label">Responsable</label>
+                                <input type="text" class="form-control" id="responsible" value="{{invoicehealth.responsible}}" disabled>
+                                <input type="hidden" class="form-control" name="responsible" value="{{invoicehealth.responsible}}" id="hidden_responsible">
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="amount_th" class="col-form-label">Montant HT</label>
+                                <input type="text" class="form-control" name="amount_th" value="{{invoicehealth.amount_th}}" id="amount_th" required>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

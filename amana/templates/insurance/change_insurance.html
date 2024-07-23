@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}changer l'assurance{% endblock %}
+{% block script %}insurance.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Changer l'assurance</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Assurance</li>
+                <li class="breadcrumb-item active">Changer</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur l'assurance</h5>
+                {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error_message }}
+                </div>
+                <script>
+                    setTimeout(function () {
+                        window.location.href = "{% url 'change_insurance' %}";
+                    }, 3000);
+                </script>
+                {% endif %}
+                <!-- General Form Elements -->
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if insurance %}
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label for="certificate_number" class="col-form-label">Numéro d'attestation</label>
+                            <input type="text" class="form-control" name="certificate_number" id="certificate_number" required value="{{insurance.certificate_number}}">
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="policy_number" class="col-form-label">Numéro de police</label>
+                            <input type="text" class="form-control" name="policy_number" id="policy_number" value="{{insurance.policy_number}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="insured" class="col-form-label">Assurés</label>
+                            <input type="text" class="form-control" name="insured" id="insured" value="{{insurance.insured}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="period" class="col-form-label">Période</label>
+                            <input type="text" class="form-control" name="period" id="period" value="{{insurance.period}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="address" class="col-form-label">Adresse</label>
+                            <input type="text" class="form-control" name="address" id="address" value="{{insurance.address}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="phone" class="col-form-label">Téléphone</label>
+                            <input type="text" class="form-control" name="phone" id="phone" value="{{insurance.phone}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="insurance_type" class="col-form-label">Type d'assurance</label>
+                            <select class="form-select" name="insurance_type" id="insurance_type">
+                                <option value="Santé" {% if insurance.insurance_type == "Santé" %} selected {% endif %}>Santé</option>
+                                <option value="Auto" {% if insurance.insurance_type == "Auto" %} selected {% endif %}>Auto</option>
+                                <option value="Voyage" {% if insurance.insurance_type == "Voyage" %} selected {% endif %}>Voyage</option>
+                                <option value="Autre" {% if insurance.insurance_type == "Autre" %} selected {% endif %}>Autre</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="col-form-label">Désignation</label>
+                            <select class="form-select" name="other" id="other">
+                                <option value="Vie credit" {% if insurance.designation == "Vie credit" %} selected {% endif %}>Vie credit</option>
+                                <option value="Globale banque" {% if insurance.designation == "Globale banque" %} selected {% endif %}>Globale banque</option>
+                                <option value="Maritime" {% if insurance.designation == "Maritime" %} selected {% endif %}>Maritime</option>
+                                <option value="Dommages" {% if insurance.designation == "Dommages" %} selected {% endif %}>Dommages</option>
+                                <option value="Incendie" {% if insurance.designation == "Incendie" %} selected {% endif %}>Incendie</option>
+                                <option value="Habilitation" {% if insurance.designation == "Habilitation" %} selected {% endif %}>Habilitation</option>
+                                <option value="RC" {% if insurance.designation == "RC" %} selected {% endif %}>RC</option>
+                                <option value="Tous risques chantiers" {% if insurance.designation == "Tous risques chantiers" %} selected {% endif %}>Tous risques chantiers</option>
+                                <option value="Transport de fonds" {% if insurance.designation == "Transport de fonds" %} selected {% endif %}>Transport de fonds</option>
+                                <option value="Multi risques" {% if insurance.designation == "Multi risques" %} selected {% endif %}>Multi risques</option>
+                                <option value="RC pro" {% if insurance.designation == "RC pro" %} selected {% endif %}>RC pro</option>
+                            </select>
+                            <select class="form-select" name="car" id="car">
+                                <option value="RC" {% if insurance.designation == "RC" %} selected {% endif %}>RC</option>
+                                <option value="RC, Incendie, Vol, Bris de glace, AFP" {% if insurance.designation == "RC, Incendie, Vol, Bris de glace, AFP" %} selected {% endif %}>RC, Incendie, Vol, Bris de glace, AFP</option>
+                                <option value="Tous Risques" {% if insurance.designation == "Tous Risques" %} selected {% endif %}>Tous Risques</option>
+                                <option value="RC, Bris de glace" {% if insurance.designation == "RC, Bris de glace" %} selected {% endif %}>RC, Bris de glace</option>
+                                <option value="RC, Bris de glace, AFP" {% if insurance.designation == "RC, Bris de glace, AFP" %} selected {% endif %}>RC, Bris de glace, AFP</option>
+                            </select>
+                            <select class="form-select" name="journey" id="journey">
+                                <option value="Definitive" {% if insurance.designation == "Definitive" %} selected {% endif %}>Definitive</option>
+                                <option value="Provisoire" {% if insurance.designation == "Provisoire" %} selected {% endif %}>Provisoire</option>
+                            </select>
+                            <input type="text" class="form-control" name="health" id="health" disabled>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="premium" class="col-form-label">Prime</label>
+                            <input type="number" class="form-control" name="premium" id="premium" value="{{insurance.premium}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="deposit" class="col-form-label">Acompte</label>
+                            <input type="number" class="form-control" name="deposit" id="deposit" value="{{insurance.deposit}}" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="balance" class="col-form-label">Solde</label>
+                            <input type="number" class="form-control" name="balance" id="balance" value="{{insurance.balance}}" disabled>
+                            <input type="hidden" class="form-control" name="balance" id="hiddenBalance" value="{{insurance.balance}}">
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="payement_method" class="col-form-label">Mode de paiement</label>
+                            <select class="form-select" name="payement_method" id="payement_method">
+                                <option value="Chèque" {% if insurance.payement_method == "Chèque" %} selected {% endif %}>Chèque</option>
+                                <option value="Espèces" {% if insurance.payement_method == "Espèces" %} selected {% endif %}>Espèces</option>
+                                <option value="Virement" {% if insurance.payement_method == "Virement" %} selected {% endif %}>Virement</option>
+                                <option value="En euro" {% if insurance.payement_method == "En euro" %} selected {% endif %}>En euro</option>
+                                <option value="Vide" {% if insurance.payement_method == "Vide" %} selected {% endif %}>Vide</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

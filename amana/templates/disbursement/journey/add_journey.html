@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}ajouter une décaissement voyage{% endblock %}
+{% block script %}journey.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Ajouter une décaissement voyage</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Décaissement</li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur le décaissement voyage</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label for="registration_number" class="col-form-label">Numéro de Matricule</label>
+                            <input type="text" class="form-control" name="registration_number" id="registration_number" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="last_name" class="col-form-label">Nom</label>
+                            <input type="text" class="form-control" name="last_name" id="last_name" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="first_name" class="col-form-label">Prénom</label>
+                            <input type="text" class="form-control" name="first_name" id="first_name" required>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="amount" class="col-form-label">Montant</label>
+                            <input type="number" class="form-control" name="amount" id="amount" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

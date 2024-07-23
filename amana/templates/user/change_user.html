@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block title %}Changer l'utilisateur{% endblock %}
+{% block script %}user.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Changer l'utilisateur</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Utilisateur</li>
+                <li class="breadcrumb-item active">Changer</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur l'utilisateur</h5>
+
+                <!-- General Form Elements -->
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    <script>
+                        setTimeout(function () {
+                            window.location.href = "{% url 'change_user' user_change.id %}";
+                        }, 3000);
+                    </script>
+                    {% endif %}
+                    {% if user_change %}
+                    <div class="row mb-3">
+                        <label for="username" class="col-sm-2 col-form-label">Nom d'utilisateur</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="text" class="form-control" name="username" id="username" value="{{ user_change.username }}" required>
+                            <div class="invalid-feedback">Veuillez entrer le nom d'utilisateur.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Mot de passe</label>
+                        <div class="col-sm-10">
+                            <div class="form-password">
+                                <label class="col-form-label">Algorithme :</label>
+                                <p class="col-form-label label-space">pbkdf2_sha256</p>
+                                <label class="col-form-label label-space">Itérations :</label>
+                                <p class="col-form-label label-space">720000</p>
+                                <label class="col-form-label label-space">Sel :</label>
+                                <p class="col-form-label">fEfuOT****************</p>
+                                <label class="col-form-label label-space">Hachage :</label>
+                                <p class="col-form-label label-space">n2Gx4L**************************************</p>
+                            </div>
+                            <div class="form-password">
+                                <p>Les mots de passe bruts ne sont pas stockés, il n’y a donc aucun moyen de voir le mot de passe de cet utilisateur, mais vous pouvez modifier le mot de passe à l’aide de <a href="{% url 'change_password' user_change.id %}" class="text-primary">ce formulaire.</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="first_name" class="col-sm-2 col-form-label">Prénom</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="text" class="form-control" name="first_name" id="first_name" value="{{ user_change.first_name }}" required>
+                            <div class="invalid-feedback">Veuillez entrer le prénom.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="last_name" class="col-sm-2 col-form-label">Nom</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="text" class="form-control" name="last_name" id="last_name" value="{{ user_change.last_name }}" required>
+                            <div class="invalid-feedback">Veuillez entrer le nom.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="email" class="col-sm-2 col-form-label">Adresse e-mail</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="email" class="form-control" name="email" id="email" value="{{ user_change.email }}" required>
+                            <div class="invalid-feedback">Veuillez entrer l'dresse e-mail.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="sex" class="col-sm-2 col-form-label">Sexe</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" name="sex" id="sex">
+                                {% for s in sexes %}
+                                <option value="{{ s.id }}" {% if user_sex.sex.sex_name == s.sex_name %} selected {% endif %}>{{ s.sex_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Autorisations</label>
+                        <div class="col-sm-10 col-form-label">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if user_change.is_active %} checked {% endif %}>
+                                <label class="form-check-label" for="is_active">Actif</label>
+                            </div>
+                            <p class="col-form-label">Indique si cet utilisateur doit être considéré comme actif. Désélectionnez cette option au lieu de supprimer des comptes.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_superuser" id="is_superuser" {% if user_change.is_superuser %} checked {% endif %}>
+                                <label class="form-check-label" for="is_superuser">Statut de super-utilisateur</label>
+                            </div>
+                            <p class="col-form-label">Indique que cet utilisateur dispose de toutes les autorisations sans les attribuer explicitement.</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Groupe</label>
+                        <div class="col-sm-10 col-form-label">
+                            <div class="groupe">
+                                <div class="table align-items-center">
+                                    <table class="table align-items-center">
+                                        <thead>
+                                            <tr>
+                                                <th class="groupe-th">Groupes disponibles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="groupe-tr">
+                                                <td class="groupe-td">
+                                                    <select multiple name="group_ch" id="group_ch">
+                                                        {% for group in groups %}
+                                                        <option value="{{ group.id }}">{{ group.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="arrow">
+                                    <div class="icon-ti" id="group_move_right">
+                                        <i class="bi bi-arrow-right text-white"></i>
+                                    </div>
+                                    <div class="icon-ti space-ti" id="group_move_left">
+                                        <i class="bi bi-arrow-left text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="table align-items-center table-flush">
+                                    <table class="table align-items-center">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="groupe-th">Groupes sélectionnés</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="groupe-tr">
+                                                <td class="groupe-td">
+                                                    <select multiple name="group_rem" id="group_rem">
+                                                        {% for group in user_groups %}
+                                                        <option value="{{ group.id }}">{{ group.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <p class="col-form-label">Les groupes auxquels cet utilisateur appartient. Un utilisateur obtiendra toutes les autorisations accordées à chacun de ses groupes. Maintenez la touche « Contrôle » ou « Commande » enfoncée pour en sélectionner plusieurs.</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Autorisations de l’utilisateur</label>
+                        <div class="col-sm-10 col-form-label">
+                            <div class="groupe">
+                                <div class="table align-items-center table-flush">
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="groupe-th">Autorisations utilisateur disponibles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="groupe-tr">
+                                                <td class="groupe-td">
+                                                    <select multiple name="aut_ch" id="aut_ch">
+                                                        {% for permission in permissions %}
+                                                        <option value="{{ permission.id }}" title="{{ permission.content_type }} | {{ permission.name }}">{{ permission.content_type }} | {{ permission.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="arrow">
+                                    <div class="icon-ti" id="move_right">
+                                        <i class="bi bi-arrow-right text-white"></i>
+                                    </div>
+                                    <div class="icon-ti space-ti" id="move_left">
+                                        <i class="bi bi-arrow-left text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="table align-items-center table-flush">
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="groupe-th">Autorisations de l’utilisateur choisies</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="groupe-tr">
+                                                <td class="groupe-td">
+                                                    <select multiple name="aut_rem" id="aut_rem">
+                                                        {% for permission in user_permissions %}
+                                                        <option value="{{ permission.id }}" title="{{ permission.content_type }} | {{ permission.name }}">{{ permission.content_type }} | {{ permission.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <p class="col-form-label">Autorisations spécifiques pour cet utilisateur. Maintenez la touche « Contrôle » ou « Commande » enfoncée pour en sélectionner plusieurs.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success" id="add">Sauvegarder</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}gestion des factures santé{% endblock %}
+{% block script %}invoicehealth.view.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Liste des factures santé</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Factures santé</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <div
+                    style="width: 100%; display: flex;align-items:center;justify-content:space-between;flex-direction: row;margin-top: 20px;margin-bottom: 20px;">
+                    <form
+                        style="width: 100%;display: flex;align-items: flex-start;justify-content: flex-start;flex-direction: row;"
+                        method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search"
+                                    placeholder="Recherchez un prestataire" required value="{{ search_query }}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-success" style="margin-left: 10px;">Rechercher</button>
+                        </div>
+                    </form>
+                    {% if 'amana.add_invoicehealth' in user.get_all_permissions %}
+                    <div
+                        style="width: 100%;display: flex;align-items: flex-end;justify-content: flex-end;flex-direction: row;">
+                        <a href="{% url 'invoicehealth'%}" class="btn btn-outline-primary">Visualisation</a>
+                        <a href="{% url 'add_invoicehealth'%}" class="btn btn-outline-success" style="margin-left:10px">Ajouter une facture</a>
+                    </div>
+                    {% endif%}
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Agence</th>
+                            <th scope="col">Prestataire</th>
+                            <th scope="col">Assuré</th>
+                            <th scope="col">N° Facture</th>
+                            <th scope="col">N° Maricule</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Montant HT</th>
+                            {% if 'amana.change_invoicehealth' in user.get_all_permissions or 'amana.delete_invoicehealth' in user.get_all_permissions %}
+                            <th scope="col">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                        <tr>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.date }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.agency }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.provider }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.insured }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.invoice_number }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.registration_number }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.description }}</td>
+                            <td scope="row" style="padding-top: 12px;">{{ invoice.amount_th }}</td>
+                            <td>
+                                {% if 'amana.change_invoicehealth' in user.get_all_permissions%}
+                                <a href="{% url 'change_invoicehealth' invoice.id %}" class="btn btn-success btn-sm"><i
+                                        class="bi bi-pencil"></i></a>
+                                {% endif %}
+                                {% if 'amana.delete_invoicehealth' in user.get_all_permissions %}
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ invoice.id }}"><i
+                                        class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if invoices.has_other_pages %}
+                <nav class="nav_pagination">
+                    <ul class="pagination">
+                        {% if invoices.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ invoices.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in invoices.paginator.page_range %}
+                        {% if invoices.number == num %}
+                        <li class="page-item">
+                            <div class="page-link">{{ num }}</div>
+                        </li>
+                        {% elif num > invoices.number|add:'-5' and num < invoices.number|add:'5' %} <li class="page-item"><a
+                                class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                            {% if invoices.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ invoices.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>
+<div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suppression du facture santé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cette facture santé ? Cette action est irréversible et toutes les données associées à cette facture santé seront perdues définitivement.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-danger" id="btnDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

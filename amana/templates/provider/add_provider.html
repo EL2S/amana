@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}ajouter un prestataire{% endblock %}
+{% block script %}provider.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Ajouter un prestataire</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Prestataires</li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur le prestataire</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <label for="name" class="col-form-label">Prestataire</label>
+                            <input type="text" class="form-control" name="name" id="name" required>
+                        </div>
+                        <div class="col-sm-12 mb-3">
+                            <label for="type" class="col-form-label">Type</label>
+                            <input type="text" class="form-control" name="type" id="type" required>
+                        </div>
+                        <div class="col-sm-12 mb-3">
+                            <label for="responsable" class="col-form-label">Responsable</label>
+                            <input type="text" class="form-control" name="responsable" id="responsable" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

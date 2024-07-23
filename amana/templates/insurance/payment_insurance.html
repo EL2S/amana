@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}payement de l'assurance{% endblock %}
+{% block script %}insurance.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Payement de l'assurance</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Assurance</li>
+                <li class="breadcrumb-item active">Payement</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur l'assurance</h5>
+
+                <!-- General Form Elements -->
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if insurance %}
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label for="balance" class="col-form-label">Solde</label>
+                            <input type="number" class="form-control" name="balance" id="balance" value="{{insurance.balance}}" disabled>
+                            <input type="hidden" class="form-control" name="balance" id="hiddenBalance" value="{{insurance.balance}}">
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="payment" class="col-form-label">Payement</label>
+                            <input type="number" class="form-control" name="payment" id="payment" required>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}production : Santé, Auto, Autres, Voyage{% endblock %}
+{% block script %}Production.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Production : Santé, Auto, Autres, Voyage</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Production</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" class="mt-4">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="production" class="col-form-label">Production</label>
+                            <select class="form-select" name="production" id="production">
+                                <option value="Auto">Auto</option>
+                                <option value="Santé">Santé</option>
+                                <option value="Voyage">Voyage</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="month" class="col-form-label">Mois</label>
+                            <select class="form-select" name="month" id="month">
+                                <option value="01">Janvier</option>
+                                <option value="02">Février</option>
+                                <option value="03">Mars</option>
+                                <option value="04">Avril</option>
+                                <option value="05">Mai</option>
+                                <option value="06">Juin</option>
+                                <option value="07">Juillet</option>
+                                <option value="08">Août</option>
+                                <option value="09">Septembre</option>
+                                <option value="10">Octobre</option>
+                                <option value="11">Novembre</option>
+                                <option value="12">Décembre</option>
+                            </select>
+                        </div>                        
+                        <div class="col-sm-4">
+                            <label for="year" class="col-form-label">Année</label>
+                            <select class="form-select" name="year" id="year">
+                            </select>
+                        </div>                        
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Exporter</button>
+                        </div>
+                    </div>
+
+                </form>
+                
+            </div>
+        </div>
+    </section>
+</main>
+{% if error %}
+<div class="modal fade show d-block" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Message d'erreur</h5>
+                <a  class="btn-close" href="{% url 'view_production'%}"></a>
+            </div>
+            <div class="modal-body">
+                {{error}}
+            </div>
+            <div class="modal-footer">
+                <a  class="btn btn-danger" href="{% url 'view_production'%}">Fermer</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

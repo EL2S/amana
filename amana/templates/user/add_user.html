@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}ajouter un utilisateur{% endblock %}
+{% block script %}user.js
+{% endblock %}
+{% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Ajouter un utilisateur</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Utilisateur</li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Information sur l'utilisateur</h5>
+
+                {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error_message }}
+                </div>
+                <script>
+                    setTimeout(function () {
+                        window.location.href = "{% url 'add_user' %}";
+                    }, 3000);
+                </script>
+                {% endif %}
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="username" class="col-sm-2 col-form-label">Nom d'utilisateur</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="text" class="form-control" name="username" id="username" required>
+                            <div class="invalid-feedback">Veuillez entrer le nom d'utilisateur.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="sex" class="col-sm-2 col-form-label">Sexe</label>
+                        <div class="col-sm-10">
+                            <select class="form-select" name="sex" id="sex">
+                                {% for sex in sexes %}
+                                <option value="{{sex.id}}">{{sex.sex_name}}</option>
+                                {% endfor%}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="password" class="form-control" name="password" id="inputPassword" required>
+                            <div class="invalid-feedback">Veuillez entrer le mot de passe.</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="inputConfirmPassword" class="col-sm-2 col-form-label">Confirmez le mot de
+                            passe</label>
+                        <div class="col-sm-10 has-validation">
+                            <input type="password" class="form-control" name="confirm_password"
+                                id="inputConfirmPassword" required>
+                            <div class="invalid-feedback">Veuillez confirmer le mot de passe.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

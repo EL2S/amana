@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}gestion des utilisateurs{% endblock %}
+{% block script %}user.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Liste des utilisateurs</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Utilisateurs</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <div
+                    style="width: 100%; display: flex;align-items:center;justify-content:space-between;flex-direction: row;margin-top: 20px;margin-bottom: 20px;">
+                    <form
+                        style="width: 100%;display: flex;align-items: flex-start;justify-content: flex-start;flex-direction: row;"
+                        method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search"
+                                    placeholder="Recherchez un utilisateur" required value="{{ search_query }}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-success" style="margin-left: 10px;">Rechercher</button>
+                        </div>
+                    </form>
+                    {% if 'auth.add_user' in user.get_all_permissions %}
+                    <div
+                        style="width: 100%;display: flex;align-items: flex-end;justify-content: flex-end;flex-direction: column;">
+                        <a href="{% url 'add_user'%}" class="btn btn-outline-success">Ajouter un
+                            utilisateur</a>
+                    </div>
+                    {% endif%}
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom d'utilisateur</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Dernière connection</th>
+                            {% if 'auth.change_user' in user.get_all_permissions or 'auth.delete_user' in user.get_all_permissions %}
+                            <th scope="col">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td scope="row" style="padding-top: 12px;">{{ u.username }}</td>
+                            <td style="padding-top: 12px;">{{ u.email }}</td>
+                            <td style="padding-top: 12px;">{{ u.first_name }}</td>
+                            <td style="padding-top: 12px;">{{ u.last_name }}</td>
+                            <td style="padding-top: 12px;">{{ u.last_login|date:"d F Y à H:i:s" }}</td>
+                            <td>
+                                {% if 'auth.change_user' in user.get_all_permissions%}
+                                <a href="{% url 'change_user' u.id %}" class="btn btn-success btn-sm"><i
+                                        class="bi bi-pencil"></i></a>
+                                {% endif %}
+                                {% if 'auth.delete_user' in user.get_all_permissions %}
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ u.id }}"><i
+                                        class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if users.has_other_pages %}
+                <nav class="nav_pagination">
+                    <ul class="pagination">
+                        {% if users.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in users.paginator.page_range %}
+                        {% if users.number == num %}
+                        <li class="page-item">
+                            <div class="page-link">{{ num }}</div>
+                        </li>
+                        {% elif num > users.number|add:'-5' and num < users.number|add:'5' %} <li class="page-item"><a
+                                class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                            {% if users.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ users.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>
+<div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suppression de l'utilisateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible et toutes les données associées à cet utilisateur seront définitivement perdues.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-danger" id="btnDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

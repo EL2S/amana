@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block title %}ajouter une facture{% endblock %}
+{% block script %}invoicehealth.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Ajouter une facture</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Factures santé</li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Facture santé</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="font-size: 14px;">Date</th>
+                            <th scope="col" style="font-size: 14px;">Agence</th>
+                            <th scope="col" style="font-size: 14px;">Prestataire</th>
+                            <th scope="col" style="font-size: 14px;">Assuré</th>
+                            <th scope="col" style="font-size: 14px;">Mois</th>
+                            <th scope="col" style="font-size: 14px;">Responsable</th>
+                            <th scope="col" style="font-size: 14px;">N° Facture</th>
+                            <th scope="col" style="font-size: 14px;">N° Maricule</th>
+                            <th scope="col" style="font-size: 14px;">Description</th>
+                            <th scope="col" style="font-size: 14px;">Montant HT</th>
+                            <th scope="col" style="font-size: 14px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="invoice-table-body">
+                        <tr class="no-invoice-row">
+                            <td scope="col" colspan="11" class="text-center" style="font-size: 14px;">Aucune facture</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <input type="hidden" class="form-control" name="data" id="data" required>
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                    </div>
+                </form>
+                <h5 class="card-title mt-4">Information sur la facture santé</h5>
+                <form>
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="date" class="col-form-label">Date</label>
+                                <input type="date" class="form-control" name="date" id="date" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="agency" class="col-form-label">Agence</label>
+                                <select class="form-select" name="agency" id="agency">
+                                    <option value="Siège">Siège</option>
+                                    <option value="Hambramba">Hambramba</option>
+                                    <option value="Mitsamiouli">Mitsamiouli</option>
+                                    <option value="Mbeni">Mbeni</option>
+                                    <option value="Ntsaoueni">Ntsaoueni</option>
+                                    <option value="Mitsoudjé">Mitsoudjé</option>
+                                    <option value="Foumbouni">Foumbouni</option>
+                                    <option value="Anjouan">Anjouan</option>
+                                    <option value="Moheli">Moheli</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="invoice_number" class="col-form-label">N° Facture</label>
+                                <input type="text" class="form-control" name="invoice_number" id="invoice_number" required>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="registration_number" class="col-form-label">Numéro de Matricule</label>
+                                <select class="form-select" name="registration_number" id="registration_number">
+                                    {% for registration_number in registration_numbers %}
+                                    <option value="{{ registration_number.registration_number }}">{{ registration_number.registration_number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="month" class="col-form-label">Mois</label>
+                                <select class="form-select" name="month" id="month">
+                                    <option value="Janvier">Janvier</option>
+                                    <option value="Février">Février</option>
+                                    <option value="Mars">Mars</option>
+                                    <option value="Avril">Avril</option>
+                                    <option value="Mai">Mai</option>
+                                    <option value="Juin">Juin</option>
+                                    <option value="Juillet">Juillet</option>
+                                    <option value="Août">Août</option>
+                                    <option value="Septembre">Septembre</option>
+                                    <option value="Octobre">Octobre</option>
+                                    <option value="Novembre">Novembre</option>
+                                    <option value="Décembre">Décembre</option>
+                                </select>
+                            </div>                            
+                            <div class="col-sm-6 mb-3">
+                                <label for="insured" class="col-form-label">Assuré</label>
+                                <select class="form-select" name="insured" id="insured">
+                                    
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="provider" class="col-form-label">Prestataire</label>
+                                <select class="form-select" name="provider" id="provider">
+                                    {% for provider in providers %}
+                                    <option value="{{ provider.name }}">{{ provider.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="responsable" class="col-form-label">Responsable</label>
+                                <input type="text" class="form-control" id="responsable" disabled>
+                                <input type="hidden" class="form-control" name="responsable" id="hidden_responsable">
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="description" class="col-form-label">Description</label>
+                                <input type="text" class="form-control" name="description" id="description" required>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="amount_th" class="col-form-label">Montant HT</label>
+                                <input type="text" class="form-control" name="amount_th" id="amount_th" required>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <label for="amount_tt" class="col-form-label">Montant Total</label>
+                                <input type="text" class="form-control" id="amount_tt" disabled>
+                                <input type="hidden" class="form-control" name="amount_tt" id="hidden_amount_tt">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary" id="add_liste">Ajouter a la liste</button>
+                            <button type="button" class="btn btn-secondary" id="update_liste">Modifier la liste</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

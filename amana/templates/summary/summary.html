@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Récapitulatif par Responsable{% endblock %}
+{% block script %}summary.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Récapitulatif par Responsable</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Récapitulatif</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" class="mt-4">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="responsible" class="col-form-label">Responsable</label>
+                            <select class="form-select" name="responsible" id="responsible">
+                                {% for responsible in primeassurance %}
+                                <option value="{{ responsible.responsible }}">{{ responsible.responsible }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="month" class="col-form-label">Mois / Année</label>
+                            <select class="form-select" name="month" id="month">
+                                <option value="Janvier">Janvier</option>
+                                <option value="Février">Février</option>
+                                <option value="Mars">Mars</option>
+                                <option value="Avril">Avril</option>
+                                <option value="Mai">Mai</option>
+                                <option value="Juin">Juin</option>
+                                <option value="Juillet">Juillet</option>
+                                <option value="Août">Août</option>
+                                <option value="Septembre">Septembre</option>
+                                <option value="Octobre">Octobre</option>
+                                <option value="Novembre">Novembre</option>
+                                <option value="Décembre">Décembre</option>
+                                <option value="Année">Année</option>
+                            </select>
+                        </div>                        
+                        <div class="col-sm-4">
+                            <label for="year" class="col-form-label">Année</label>
+                            <select class="form-select" name="year" id="year">
+                            </select>
+                        </div>                        
+                    </div>
+                    <div class="row mb-3 mt-4">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-success">Exporter</button>
+                        </div>
+                    </div>
+
+                </form>
+                
+            </div>
+        </div>
+    </section>
+</main>
+{% if error %}
+<div class="modal fade show d-block" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Message d'erreur</h5>
+                <a  class="btn-close" href="{% url 'view_summary'%}"></a>
+            </div>
+            <div class="modal-body">
+                {{error}}
+            </div>
+            <div class="modal-footer">
+                <a  class="btn btn-danger" href="{% url 'view_summary'%}">Fermer</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

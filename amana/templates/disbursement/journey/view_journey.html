@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}gestion des décaissement voyage{% endblock %}
+{% block script %}journey.js
+{% endblock %}
+{% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Liste des décaissement voyage</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <div>Accueil</div>
+                </li>
+                <li class="breadcrumb-item">Décaissement</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <ul class="nav nav-tabs d-flex mt-5" id="myTabjustified" role="tablist">
+                    {% if 'amana.view_smallcrate' in user.get_all_permissions %}
+                        <a href="{% url 'view_smallcrate'%}" class="nav-item flex-fill" role="presentation">
+                            <button class="nav-link w-100" id="home-tab" data-bs-toggle="tab"
+                                data-bs-target="#home-justified" type="button" role="tab" aria-controls="home"
+                                aria-selected="true">Petite caisse</button>
+                        </a>
+                    {% endif%}
+                    {% if 'amana.view_health' in user.get_all_permissions %}
+                    <a href="{% url 'view_health'%}" class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100" id="home-tab" data-bs-toggle="tab"
+                            data-bs-target="#home-justified" type="button" role="tab" aria-controls="home"
+                            aria-selected="true">Santé</button>
+                    </a>
+                    {% endif%}
+                    {% if 'amana.view_car' in user.get_all_permissions %}
+                    <a href="{% url 'view_car'%}" class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100" id="profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#profile-justified" type="button" role="tab" aria-controls="profile"
+                            aria-selected="false">Auto</button>
+                    </a>
+                    {% endif%}
+                    {% if 'amana.view_journey' in user.get_all_permissions %}
+                    <a href="{% url 'view_journey'%}" class="nav-item flex-fill" role="presentation">
+                        <button class="nav-link w-100 active" id="contact-tab" data-bs-toggle="tab"
+                            data-bs-target="#contact-justified" type="button" role="tab" aria-controls="contact"
+                            aria-selected="false">Voyage</button>
+                    </a>
+                    {% endif%}
+                </ul>
+                <div class="tab-content pt-2" id="myTabjustifiedContent">
+                    <div class="tab-pane fade show active" id="profile-justified" role="tabpanel" aria-labelledby="profile-tab">
+                        <div
+                            style="width: 100%; display: flex;align-items:center;justify-content:space-between;flex-direction: row;margin-top: 20px;margin-bottom: 20px;">
+                            <form
+                                style="width: 100%;display: flex;align-items: flex-start;justify-content: flex-start;flex-direction: row;"
+                                method="POST">
+                                {% csrf_token %}
+                                <div class="col">
+                                    <div class="input-group" style="width: 500px;">
+                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                        <input type="text" class="form-control" id="search" name="search"
+                                            placeholder="Recherchez une décaissement avec le N ° Matricule"
+                                            value="{{ search_query }}">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success"
+                                        style="margin-left: 10px;">Rechercher</button>
+                                </div>
+                            </form>
+                            {% if 'amana.add_journey' in user.get_all_permissions %}
+                            <div
+                                style="width: 100%;display: flex;align-items: flex-end;justify-content: flex-end;flex-direction: row;">
+                                <a href="{% url 'add_journey'%}" class="btn btn-outline-success">Ajouter une
+                                    décaissement</a>
+                            </div>
+                            {% endif%}
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">N ° Matricule</th>
+                                    <th scope="col">Nom et prénom</th>
+                                    <th scope="col">Montant</th>
+                                    {% if 'amana.change_journey' in user.get_all_permissions or 'amana.delete_journey' in user.get_all_permissions %}
+                                    <th scope="col">Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for journey in journeys %}
+                                <tr>
+                                    <td scope="row" style="padding-top: 12px;">{{ journey.disbursement.date|date:"d F Y à H:i" }}
+                                    </td>
+                                    <td style="padding-top: 12px;">{{journey.registration_number}}</td>
+                                    <td style="padding-top: 12px;">{{journey.first_name}} {{journey.last_name}}</td>
+                                    <td style="padding-top: 12px;">{{journey.disbursement.amount}} KMF</td>
+                                    <td>
+                                        {% if 'amana.change_journey' in user.get_all_permissions%}
+                                        <a href="{% url 'change_journey' journey.id %}"
+                                            class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></a>
+                                        {% endif %}
+                                        {% if 'amana.delete_journey' in user.get_all_permissions %}
+                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm delete_journey"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="{{ journey.id }}"><i class="bi bi-trash"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if journeys.has_other_pages %}
+                        <nav class="nav_pagination">
+                            <ul class="pagination">
+                                {% if journeys.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ journeys.previous_page_number }}"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% for num in journeys.paginator.page_range %}
+                                {% if journeys.number == num %}
+                                <li class="page-item">
+                                    <div class="page-link">{{ num }}</div>
+                                </li>
+                                {% elif num > journeys.number|add:'-5' and num < journeys.number|add:'5' %} <li
+                                    class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if journeys.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ journeys.next_page_number }}"
+                                            aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suppression du décaissement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cette décaissement voyage ? Cette action est irréversible et toutes les données
+                associées à cette décaissement voyage seront définitivement perdues.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-danger" id="btnDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
